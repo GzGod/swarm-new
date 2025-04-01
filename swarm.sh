@@ -23,6 +23,9 @@ cd rl-swarm
 pip install --upgrade pip
 pip install -r requirements.txt
 
+# 修复 protobuf 版本冲突（强制降级）
+pip install "protobuf<5.28.0,>=3.12.2" --force-reinstall
+
 # 检测 CPU 核心数
 CPU_CORES=$(nproc)
 DEFAULT_THREADS=$((CPU_CORES / 2))
@@ -46,9 +49,8 @@ else
     python main.py
 fi
 
-# ----------- 自动检测 modal-login 的实际端口 ----------
-sleep 3  # 稍等前端跑起来
-
+# 检测 modal-login 实际端口（如已启用）
+sleep 3
 NEXT_PORT=$(ss -tuln | grep LISTEN | grep 127.0.0.1 | grep -E ':30[0-9]{2}' | awk '{print $5}' | cut -d':' -f2 | sort | uniq)
 
 if [ -n "$NEXT_PORT" ]; then
